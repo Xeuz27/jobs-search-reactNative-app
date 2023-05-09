@@ -1,35 +1,38 @@
-import {
-  Text,
-  View,
-  SafeAreaView,
-  ScrollView,
-  ActivityIndicator,
-  RefreshControl,
-} from "react-native";
+import {Text, View, SafeAreaView, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
 import { Stack, useRouter, useSearchParams } from "expo-router";
 import { useCallback, useState } from "react";
 
-import {
-  Company,
-  JobAbout,
-  JobFooter,
-  JobTabs,
-  ScreenHeaderBtn,
-  Specifics,
-} from "../../components";
+import {Company, JobAbout, JobFooter, JobTabs, ScreenHeaderBtn, Specifics } from "../../components";
 import { COLORS, icons, SIZES } from "../../constants";
 import useFetch from "../../hook/useFetch";
+
+const tabs = ["About", "Qualifications", "Responsibilities"];
 
 const jobDetails = () => {
   const params = useSearchParams();
   const router = useRouter();
 
-  const { Data, isLoading, error, reFetch } = useFetch("job-details", {
+  const { data, isLoading, error, refetch } = useFetch("job-details", {
     job_id: params.id,
   });
-
+  const [activeTab, setActiveTab] = useState(tabs[0]);
   const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = () => {}
+  const onRefresh = () => {};
+
+  const displayTabContent = () => {
+    switch (activeTab) {
+      case "Qualifications":
+        return <Specifics
+            title='Qualifications'
+            points={data[0].job_highlights?.Qualifications ?? ["N/A"]}
+          />
+        break;
+      case 'About':
+      case 'Responsibilities':
+      default:
+        break;
+    }
+  }
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: COLORS.lightWhite }}>
@@ -53,28 +56,35 @@ const jobDetails = () => {
       />
       <>
         <ScrollView
-            showsVerticalScrollIndicator={false} refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+          showsVerticalScrollIndicator={false}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
         >
-            {isLoading ? (
-                <ActivityIndicator size='large' color={COLORS.primary} />
-            ) : error ? (
-                <Text>Something Went Wrong</Text>
-            ) : Data.length === 0 ? (
-                <Text>There is no Data</Text>
-            ) : (
-                <View style={{padding: SIZES.medium, paddingBottom:100}}>
-                    <Company
-                     />
-                     <JobTabs />
-                </View>
-            )
-            
-            }
-
+          {isLoading ? (
+            <ActivityIndicator size="large" color={COLORS.primary} />
+          ) : error ? (
+            <Text>Something Went Wrong</Text>
+          ) : data.length === 0 ? (
+            <Text>There is no Data</Text>
+          ) : (
+            <View style={{ padding: SIZES.medium, paddingBottom: 100 }}>
+              <Company
+                companyLogo={data[0].employer_logo}
+                jobTitle={data[0].job_title}
+                companyName={data[0].employer_name}
+                Location={data[0].job_country}
+              />
+              <JobTabs
+                tabs={tabs}
+                activeTab={activeTab}
+                setActiveTab={setActiveTab}
+              />
+              {displayTabContent()}
+            </View>
+          )}
         </ScrollView>
       </>
-
-
     </SafeAreaView>
   );
 };
