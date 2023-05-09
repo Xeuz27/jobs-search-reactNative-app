@@ -30,13 +30,14 @@ const Welcome = () => {
             value=""
             onChange={() => {}}
             placeholder="What are you looking For?"
+            placeholderTextColor={'#000000'}
           />
         </View>
 
         <TouchableOpacity style={styles.searchBtn} onPress={() => {}}>
           <Image
             source={icons.search}
-            resizeMode="container"
+            resizeMode="contain"
             style={styles.searchBtnImage}
           />
         </TouchableOpacity>
