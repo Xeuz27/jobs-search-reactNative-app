@@ -8,10 +8,10 @@ const styles = StyleSheet.create({
     marginBottom: SIZES.small / 2,
   },
   btn: (name, activeTab) => ({
-    paddingVertical: SIZES.medium,
+    paddingVertical: SIZES.small,
     paddingHorizontal: SIZES.xLarge,
     backgroundColor: name === activeTab ? COLORS.primary : "#F3F4F8",
-    borderRadius: SIZES.medium,
+    borderRadius: SIZES.large,
     marginLeft: 2,
     ...SHADOWS.medium,
     shadowColor: COLORS.white,
